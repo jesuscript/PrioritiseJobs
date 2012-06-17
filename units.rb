@@ -45,6 +45,15 @@ class TestPrioritise < Test::Unit::TestCase
     assert_operator to_hash(result)["b"], :<, to_hash(result)["e"]
   end
 
+  def test_faulty_dependency
+    # "external" dependency
+    assert_raise ArgumentError do
+      result = Prioritise.new.run({ "a" => nil,
+                                    "b" => nil,
+                                    "c" => "d" })
+    end
+  end
+
   def test_self_dependency
     assert_raise ArgumentError do
       Prioritise.new.run({ "a" => nil,"b" => nil,"c" => "c" })
