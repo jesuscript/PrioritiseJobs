@@ -11,10 +11,11 @@ class Prioritise
     if jobs.select{|j,d| !d.nil? and !jobs.keys.include?(d) }.any?
       raise ArgumentError, "Dependency error"
     end
-    
+
+    # main loop
     while jobs.any? do
-      found = false
-      
+       found = false
+
       jobs.each do |job,depend|
         if depend.nil? or result.include? depend
           result.push(job)
@@ -24,6 +25,7 @@ class Prioritise
         end
       end
 
+      # the queue is not empty but we couldn't find a job to add?
       unless found 
         raise ArgumentError, "Jobs can't have circular dependencies"
       end
@@ -35,7 +37,7 @@ end
 
 if __FILE__ == $0
   prioritise = Prioritise.new(ARGV)
-  prioritise.run({})
+  prioritise.run({"a" => nil})
 end
 
 
