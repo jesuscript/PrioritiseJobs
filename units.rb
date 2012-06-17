@@ -25,7 +25,7 @@ class TestPrioritise < Test::Unit::TestCase
     assert_equal  ["a","b","c"].to_set, result.to_set
 
     #testing for correct order ("c" before "b")
-    assert_operator to_hash(result)["c"], :<, to_hash(to_hash)["b"]
+    assert_operator to_hash(result)["c"], :<, to_hash(result)["b"]
   end
 
   def test_complex_dependency
