@@ -2,12 +2,19 @@ class Prioritise
   def run(jobs)
     result = []
 
-    while jobs.any? do 
+    while jobs.any? do
+      found = false
+      
       jobs.each do |job,depend|
-        result.push(job)
-        jobs.delete(job)
-        break
+        if depend.nil? or result.include? depend
+          result.push(job)
+          jobs.delete(job)
+          found = true
+          break
+        end
       end
+
+      raise ArgumentError.new("Dependency error") unless found 
     end
     
     return result

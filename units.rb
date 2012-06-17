@@ -36,7 +36,7 @@ class TestPrioritise < Test::Unit::TestCase
                                   "e" => "b",
                                   "f" => nil })
 
-    assert_equal ["a","b","c","d","e","f"], result.to_set
+    assert_equal ["a","b","c","d","e","f"].to_set, result.to_set
     assert_equal 6, result.length
 
     assert_operator to_hash(result)["c"], :<, to_hash(result)["b"]
@@ -46,19 +46,37 @@ class TestPrioritise < Test::Unit::TestCase
   end
 
   def test_self_dependency
-    assert_raise do
+    assert_raise ArgumentError do
       Prioritise.new.run({ "a" => nil,"b" => nil,"c" => "c" })
+    end
+
+    begin
+      Prioritise.new.run({ "a" => nil,"b" => nil,"c" => "c" })
+    rescue ArgumentError =>  e
+      assert_equal "Jobs can't depend on themselves", e.message 
     end
   end
 
   def test_circular_dependency
-    assert_raise do
+    assert_raise ArgumentError do
+      #Jobs can't have circular dependencies
       Prioritise.new.run({ "a" => nil,
                            "b" => "c",
                            "c" => "f",
                            "d" => "a",
                            "e" => nil,
                            "f" => "b"  })
+    end
+
+    begin
+      Prioritise.new.run({ "a" => nil,
+                           "b" => "c",
+                           "c" => "f",
+                           "d" => "a",
+                           "e" => nil,
+                           "f" => "b"  })
+    rescue ArgumentError => e
+      assert_equal "Jobs can't have circular dependencies", e.message
     end
   end
 
